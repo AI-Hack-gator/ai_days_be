@@ -5,7 +5,7 @@ import csv
 from langchain.document_loaders import TextLoader, DirectoryLoader
 from langchain.indexes import VectorstoreIndexCreator
 
-API_KEY = "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"
+API_KEY = ""
 openai.api_key = API_KEY
 app = Flask(__name__)
 

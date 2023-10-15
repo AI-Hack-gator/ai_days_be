@@ -1,6 +1,6 @@
 import requests
 import json
-apikey='8bcxD9IpOnNB28ZubjBoRUPhJY9r9Xt4r6OM0IAGnMwytnY8Wj4PbytIhpUs'
+apikey='weppFbVWLCpW5kcuWEXuY7dC1brpdNMftAbnYXrvMEdTFPGFxzpwtxfZ5TDL'
 url = "https://stablediffusionapi.com/api/v3/text2img"
 
 def generateImageForResponse(chatgpt_output_text) -> str:

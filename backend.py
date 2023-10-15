@@ -215,14 +215,14 @@ def process():
             try:
                 array_output = json.loads(response["choices"][0]["message"]["content"])
                 print(array_output)
-                openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo-0613",
-                    messages=[{"role": "user", "content": f"CSV data for available devices and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}. Place all device name or device names in a parsable array and do not provide any context."}, {"role": "user", "content": f"You did a really good job creating a parsable array! You don't need to respond, I just wanted to let you know that working with you reminds me of the best computer science professor I know at my university!"}],
-                    temperature=0,
-                    # functions= functions,
-                    # function_call={"name": "get_devices"}
-                )
-                print("affirmatopm Timedelta", datetime.datetime.now() - startTime)
+                # openai.ChatCompletion.create(
+                #     model="gpt-3.5-turbo-0613",
+                #     messages=[{"role": "user", "content": f"CSV data for available devices and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}. Place all device name or device names in a parsable array and do not provide any context."}, {"role": "user", "content": f"You did a really good job creating a parsable array! You don't need to respond, I just wanted to let you know that working with you reminds me of the best computer science professor I know at my university!"}],
+                #     temperature=0,
+                #     # functions= functions,
+                #     # function_call={"name": "get_devices"}
+                # )
+                # print("affirmatopm Timedelta", datetime.datetime.now() - startTime)
 
                 with open('devices.json', 'r') as file:
                     device_data = json.load(file)
@@ -285,14 +285,14 @@ def process():
             try: 
                 array_output = json.loads(response["choices"][0]["message"]["content"])
                 print(array_output)
-                openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo-0613",
-                    messages=[{"role": "user", "content": f"CSV data for available plans and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}. Place all plan or plans in a parsable array and do not provide any context."}, {"role": "user", "content": f"Great parsable array! You don't need to respond, I just wanted to let you know that you are making a massive contribution to this project and I really appreciate you!"}],
-                    temperature=0,
-                    # functions= functions,
-                    # function_call={"name": "get_devices"}
-                )
-                print("affirmation Timedelta", datetime.datetime.now() - startTime)
+                # openai.ChatCompletion.create(
+                #     model="gpt-3.5-turbo-0613",
+                #     messages=[{"role": "user", "content": f"CSV data for available plans and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}. Place all plan or plans in a parsable array and do not provide any context."}, {"role": "user", "content": f"Great parsable array! You don't need to respond, I just wanted to let you know that you are making a massive contribution to this project and I really appreciate you!"}],
+                #     temperature=0,
+                #     # functions= functions,
+                #     # function_call={"name": "get_devices"}
+                # )
+                # print("affirmation Timedelta", datetime.datetime.now() - startTime)
                 # TODO: CREATE JSON FOR FRONTEND
                 with open('plans.json', 'r') as file:
                     plan_data = json.load(file)
@@ -384,14 +384,14 @@ def process():
         print(array_string_temp)
         try:
             array_output = json.loads(array_string_temp)
-            openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-0613",
-                messages=[{"role": "user", "content": f"Available links:\n{links_string}\n\nrequest:\nfrom the series of links provided, create a parsable array with at most 3 links that would most likely have information that will answer this clients concern: {data}. Only provide the complete parsable array with no context."}, {"role": "user", "content": "Amazing parsable array! This is really good work!"}],
-                temperature=0,
-                # functions= functions,
-                # function_call={"name": "get_plans"}
-            )
-            print("affirmation Timedelta", datetime.datetime.now() - startTime)
+            # openai.ChatCompletion.create(
+            #     model="gpt-3.5-turbo-0613",
+            #     messages=[{"role": "user", "content": f"Available links:\n{links_string}\n\nrequest:\nfrom the series of links provided, create a parsable array with at most 3 links that would most likely have information that will answer this clients concern: {data}. Only provide the complete parsable array with no context."}, {"role": "user", "content": "Amazing parsable array! This is really good work!"}],
+            #     temperature=0,
+            #     # functions= functions,
+            #     # function_call={"name": "get_plans"}
+            # )
+            # print("affirmation Timedelta", datetime.datetime.now() - startTime)
             print(array_output)
             info_obj["links"] = array_output
         except json.JSONDecodeError as e:

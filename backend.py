@@ -156,9 +156,9 @@ def process():
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo-0613",
-                messages=[{"role": "user", "content": f"CSV data for available devices and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}"}],
-                functions= functions,
-                function_call={"name": "get_devices"}
+                messages=[{"role": "user", "content": f"CSV data for available devices and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}. Place all device or devices in a parsable array and do not provide any context."}],
+                # functions= functions,
+                # function_call={"name": "get_devices"}
             )
             print(response)
         return jsonify(result=response)
@@ -174,9 +174,9 @@ def process():
             print(row_text)
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo-0613",
-                messages=[{"role": "user", "content": f"client is looking for:\n{data}\navailable options:\n{row_text}\nrequest:\nreturn an array of the devices with all relevant information that match the client's needs"}],
-                functions= functions,
-                function_call={"name": "get_plans"}
+                messages=[{"role": "user", "content": f"CSV data for available plans and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}. Place all plan or plans in a parsable array and do not provide any context."}],
+                # functions= functions,
+                # function_call={"name": "get_plans"}
             )
             print(response)
         return jsonify(result=response)

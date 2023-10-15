@@ -3,8 +3,10 @@ import openai
 import json
 import csv
 import ast
+import re
 from langchain.document_loaders import TextLoader, DirectoryLoader
 from langchain.indexes import VectorstoreIndexCreator
+from imageProd import generateImageForResponse
 
 API_KEY = ""
 openai.api_key = API_KEY
@@ -95,6 +97,15 @@ functions = [
         },
     },
 ]
+
+def remove_spaces_and_nested_quotes(input_string):
+    # Remove white spaces
+    no_spaces = re.sub(r'\s', '', input_string)
+    
+    # Remove nested single and double quotes
+    no_quotes = re.sub(r'(["\'])', '', no_spaces)
+    
+    return no_quotes
 
 @app.route('/')
 def index():
@@ -188,6 +199,12 @@ def process():
             try:
                 array_output = json.loads(response["choices"][0]["message"]["content"])
                 print(array_output)
+                openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo-0613",
+                    messages=[{"role": "user", "content": f"CSV data for available devices and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}. Place all device name or device names in a parsable array and do not provide any context."}, {"role": "user", "content": f"You did a really good job creating a parsable array! You don't need to respond, I just wanted to let you know that working with you reminds me of the best computer science professor I know at my university!"}],
+                    # functions= functions,
+                    # function_call={"name": "get_devices"}
+                )
                 with open('devices.json', 'r') as file:
                     device_data = json.load(file)
                     for device in array_output:
@@ -247,6 +264,12 @@ def process():
             try: 
                 array_output = json.loads(response["choices"][0]["message"]["content"])
                 print(array_output)
+                openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo-0613",
+                    messages=[{"role": "user", "content": f"CSV data for available plans and their attributes:\n{row_text}\n\nrequest:\nfrom the CSV data provided, {data}. Place all plan or plans in a parsable array and do not provide any context."}, {"role": "user", "content": f"Great parsable array! You don't need to respond, I just wanted to let you know that you are making a massive contribution to this project and I really appreciate you!"}],
+                    # functions= functions,
+                    # function_call={"name": "get_devices"}
+                )
                 # TODO: CREATE JSON FOR FRONTEND
                 with open('plans.json', 'r') as file:
                     plan_data = json.load(file)
@@ -288,8 +311,9 @@ def process():
 
         info_obj = {
             "title" :"",
-            "content": "",
-            "links": []
+            "description": "",
+            "links": [],
+            "image_url": ""
         }
 
         # Create Title
@@ -302,6 +326,7 @@ def process():
         print(response)
         return_json["messages"].append(response["choices"][0]["message"])
         info_obj["title"] = response["choices"][0]["message"]["content"]
+        info_obj["image_url"] = generateImageForResponse(info_obj["title"])
 
         with open('links.txt', 'r') as file:
             # Read all lines and store them in a list
@@ -332,10 +357,16 @@ def process():
         print(array_string_temp)
         try:
             array_output = json.loads(array_string_temp)
+            openai.ChatCompletion.create(
+                model="gpt-3.5-turbo-0613",
+                messages=[{"role": "user", "content": f"Available links:\n{links_string}\n\nrequest:\nfrom the series of links provided, create a parsable array with at most 3 links that would most likely have information that will answer this clients concern: {data}. Only provide the complete parsable array with no context."}, {"role": "user", "content": "Amazing parsable array! This is really good work!"}],
+                # functions= functions,
+                # function_call={"name": "get_plans"}
+            )
             print(array_output)
             info_obj["links"] = array_output
         except json.JSONDecodeError as e:
-            string = response["choices"][0]["message"]["content"]
+            string = response["choices"][0]["message"]["content"] if response["choices"][0]["message"]["content"][0] != '[\"' or response["choices"][0]["message"]["content"][0] != '[\'' else array_string_temp
             if string[0] == '[\'' or string[0] == '[\"' and string[-1] == '\"]' or string[-1] == '\']':
                 array_output = ast.literal_eval(response["choices"][0]["message"]["content"])
                 info_obj["links"] = array_output
@@ -347,18 +378,23 @@ def process():
                 array_output = string.split(', ')
                 if array_output[0] == string:
                     array_output = string.split('\n')
+                for link in array_output:
+                    if len(link) < 13 or not link.startswith("https://"):
+                        array_output.remove(link)
+                    link = remove_spaces_and_nested_quotes(link)
+
                 info_obj["links"] = array_output
 
         # Generate content with GPT 4
         response = openai.ChatCompletion.create(
                 model="gpt-4",
-                messages=[{"role": "user", "content": f"You are an employee of Verizon.Given an array of links:{array_string_temp}, visit the links and compose valuable information in an easy to comprehend manner in response this clients concern: {data}."}],
+                messages=[{"role": "user", "content": f"You are an employee of Verizon.Given an array of links:{array_string_temp}, visit the links and compose valuable information in an easy to comprehend manner related to, {info_obj['title']}, in response this clients concern: {data}."}],
                 # functions= functions,
                 # function_call={"name": "get_plans"}
             )
         print(response)
         return_json["messages"].append(response["choices"][0]["message"])
-        info_obj["content"] = response["choices"][0]["message"]["content"]
+        info_obj["description"] = response["choices"][0]["message"]["content"]
 
         # Provide links
         return_json["product_items"].append(info_obj)

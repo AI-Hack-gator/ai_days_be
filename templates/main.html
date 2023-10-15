@@ -1,0 +1,36 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GPT test</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("form").submit(function(event) {
+                event.preventDefault(); // Prevent the form from submitting normally
+                var formData = $(this).serialize(); // Serialize form data
+                const elementContainer = document.getElementById("responses")
+                // Make an asynchronous POST request to the Flask /process route
+                $.post("/process", formData, function(data) {
+                    // Update the element with the processed data
+                    const newElement = document.createElement("p")
+                    newElement.textContent = data.result
+                    elementContainer.appendChild(newElement)
+                });
+            });
+        });
+    </script>
+  </head>
+  <body>
+    <h1>Talk to ME</h1>
+    <div id="responses"></div>
+    <form action="/process" method="POST">
+        <label for="data">Ask me anything:</label>
+        <input type="text" id="data" name="data" required>
+        <button type="submit">Submit</button>
+    </form>
+	<script src="index.js"></script>
+  </body>
+</html>
